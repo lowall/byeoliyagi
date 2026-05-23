@@ -702,51 +702,54 @@ function initRec() {
   S.rec.lang = 'ko-KR';
   S.rec.continuous = true;
   S.rec.interimResults = true;
+  S.finalText = '';
   S.interimText = '';
 
   S.rec.onresult = e => {
     let interim = '';
-    let final = '';
     for (let i = e.resultIndex; i < e.results.length; i++) {
       const t = e.results[i][0].transcript;
-      if (e.results[i].isFinal) final += t;
-      else interim += t;
+      if (e.results[i].isFinal) {
+        S.finalText += t;
+      } else {
+        interim = t;
+      }
     }
-    S.interimText = final || interim;
-    // 실시간으로 mic label에 표시
+    // 실시간으로 듣고 있는 내용 라벨에 표시
+    const display = (S.finalText + interim).trim();
     const label = document.getElementById('micLabel');
-    if (S.interimText) {
-      label.textContent = S.interimText;
-      label.style.color = 'var(--brown)';
-      label.style.fontWeight = '500';
-    }
-    // final 결과 나오면 자동 제출
-    if (final && final.trim().length > 1) {
-      S.rec.stop();
+    if (display) {
+      label.textContent = display.length > 20 ? display.slice(-20) + '...' : display;
+      label.style.color = 'var(--brown2)';
+      label.style.fontWeight = '600';
+      label.style.fontSize = '13px';
     }
   };
 
   S.rec.onend = () => {
-    const txt = S.interimText.trim();
+    const txt = S.finalText.trim();
+    S.finalText = '';
     S.interimText = '';
     stopListen();
-    if (txt && txt.length > 1) {
+    if (S.inputEnabled && txt.length > 0) {
       handleAnswer(txt);
+    } else if (S.inputEnabled) {
+      // 아무 말도 못 들었으면
+      addMsg('ai', '말씀을 못 들었어요. 다시 눌러서 말씀해 주세요 😊').then(() => enableInput());
     }
   };
 
   S.rec.onerror = e => {
-    console.log('음성 에러:', e.error);
+    console.log('STT 에러:', e.error);
+    S.finalText = '';
     stopListen();
-    S.interimText = '';
     if (e.error === 'not-allowed') {
-      addMsg('ai', '마이크 권한이 필요해요. 브라우저 설정에서 허용해주세요.');
+      addMsg('ai', '마이크 권한이 필요해요.\n브라우저 주소창 옆 자물쇠 아이콘을 눌러서 허용해주세요.').then(() => setMode('t'));
     } else if (e.error === 'no-speech') {
-      addMsg('ai', '말씀을 못 들었어요. 다시 눌러서 말씀해주세요 😊');
       enableInput();
     } else {
       setMode('t');
-      addMsg('ai', '음성 인식이 어려워요. 아래 문자 입력으로 해주세요 😊');
+      addMsg('ai', '음성 인식이 어렵네요. 아래 문자 입력으로 해주세요 😊').then(() => enableInput());
     }
   };
 }
@@ -855,42 +858,51 @@ async function askQ(idx) {
 
 // ── HANDLE ANSWER ──
 async function handleAnswer(txt) {
-  if (!txt || txt.length < 2) {
-    await addMsg('ai', '잘 못 들었어요, 다시 한번 말씀해 주세요 😊');
+  if (!txt || txt.trim().length < 2) {
+    await addMsg('ai', '잘 못 들었어요. 다시 눌러서 말씀해 주세요 😊');
     enableInput(); return;
   }
 
   disableInput();
-  await addMsg('user', txt);
 
-  // 현재 질문 답변 저장
+  // 채팅창에 말한 내용 바로 표시
+  await addMsg('user', txt.trim());
+
+  // 답변 저장
   const cur = S.answers[S.qIdx];
   if (!cur.a) {
-    cur.a = txt;
+    cur.a = txt.trim();
   } else {
-    cur.followups.push({ q: Qs[S.qIdx].followups[S.followupCount - 1], a: txt });
+    cur.followups.push({ q: Qs[S.qIdx].followups[S.followupCount - 1], a: txt.trim() });
   }
 
-  // 답변이 너무 짧고 꼬리질문 남아있으면 더 물어봄
-  const isShort = txt.replace(/[.!?~ㅎㅋ\s]/g, '').length < 20;
+  // 너무 짧은 답변 (한 단어 수준) → 더 말해달라고
+  const cleaned = txt.replace(/[.!?~ㅎㅋ\s,]/g, '');
+  const isShort = cleaned.length < 15;
   const hasFollowup = S.followupCount < Qs[S.qIdx].followups.length;
 
   if (isShort && hasFollowup) {
     const fq = Qs[S.qIdx].followups[S.followupCount];
     S.followupCount++;
-    await addMsg('ai', fq, 300);
+    await addMsg('ai', fq, 400);
     enableInput();
+  } else if (isShort && !hasFollowup) {
+    // 꼬리질문 다 썼는데 여전히 짧으면 그냥 넘어감
+    await nextQuestion();
   } else {
-    // 다음 질문으로
-    const next = S.qIdx + 1;
-    if (next < Qs.length) {
-      await addMsg('sys', `${S.qIdx + 1}번째 이야기 완성! ✨`, 200);
-      await askQ(next);
-    } else {
-      await addMsg('sys', `모든 이야기를 다 들었어요! 💛`, 200);
-      await addMsg('ai', `${S.name}님, 정말 소중한 이야기들이에요.\n이제 책으로 만들어 드릴게요!`);
-      setTimeout(() => { go('gen'); generateStory(); }, 1500);
-    }
+    await nextQuestion();
+  }
+}
+
+async function nextQuestion() {
+  const next = S.qIdx + 1;
+  if (next < Qs.length) {
+    await addMsg('sys', `${S.qIdx + 1}번째 이야기 완성! ✨`, 300);
+    await askQ(next);
+  } else {
+    await addMsg('sys', '모든 이야기를 다 들었어요! 💛', 300);
+    await addMsg('ai', `${S.name}님, 정말 소중한 이야기들이에요.\n이제 책으로 만들어 드릴게요!`);
+    setTimeout(() => { go('gen'); generateStory(); }, 1500);
   }
 }
 
@@ -898,16 +910,19 @@ async function handleAnswer(txt) {
 function toggleMic() {
   if (!S.inputEnabled) return;
   if (S.listening) {
+    // 멈추면 onend에서 자동으로 handleAnswer 호출됨
     S.rec?.stop();
-    // onend에서 결과 처리됨
   } else {
+    S.finalText = '';
     S.interimText = '';
     startListen();
     try {
       S.rec?.start();
     } catch(e) {
-      // 이미 실행 중인 경우
       stopListen();
+      // 재초기화 후 재시도
+      initRec();
+      setTimeout(() => { startListen(); try { S.rec?.start(); } catch(e2) {} }, 300);
     }
   }
 }
