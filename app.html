@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 <title>별이야기 — 부모님 자서전 무료 체험</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@300;400;600;700;900&family=Noto+Sans+KR:wght@300;400;500;700&display=swap');
@@ -1015,12 +1016,10 @@ TITLE: (20자 이내 소제목)
 CONTENT: (본문만, 마크다운 없이, em 태그만 허용)`;
 
   try {
-    const res = await fetch('https://api.anthropic.com/v1/messages', {
+    const res = await fetch('/api/generate', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
-        max_tokens: 1500,
         messages: [{ role: 'user', content: prompt }]
       })
     });
@@ -1054,70 +1053,49 @@ function goKakao() {
   window.open('https://pf.kakao.com/_KAKAO_CHANNEL_ID', '_blank');
 }
 
-function downloadPDF() {
-  const { jsPDF } = window.jspdf;
-  if (!jsPDF) { alert('PDF 생성 중 오류가 발생했어요. 잠시 후 다시 시도해주세요.'); return; }
+async function downloadPDF() {
+  const btn = document.querySelector('.btn-main');
+  if (btn) { btn.textContent = '📄 생성 중...'; btn.disabled = true; }
 
-  const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+  try {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
 
-  // ── 표지 ──
-  doc.setFillColor(240, 230, 204);
-  doc.rect(0, 0, 210, 297, 'F');
-  doc.setFillColor(184, 152, 106);
-  doc.rect(0, 0, 6, 297, 'F');
+    // 책 미리보기 영역 캡처
+    const bookEl = document.querySelector('.book-wrap');
 
-  doc.setFontSize(9);
-  doc.setTextColor(160, 128, 96);
-  doc.text('BYEOL STORY  별이야기', 18, 36);
+    const canvas = await html2canvas(bookEl, {
+      scale: 2,
+      useCORS: true,
+      backgroundColor: '#FDF6E3',
+      logging: false
+    });
 
-  doc.setFontSize(30);
-  doc.setFont('helvetica', 'bold');
-  doc.setTextColor(44, 31, 20);
-  doc.text(S.name, 18, 80);
-  doc.setFontSize(22);
-  doc.text('\uC774\uC57C\uAE30', 18, 98);
+    const imgData = canvas.toDataURL('image/jpeg', 0.95);
+    const imgW = 210;
+    const imgH = (canvas.height * imgW) / canvas.width;
 
-  doc.setFontSize(12);
-  doc.setFont('helvetica', 'normal');
-  doc.setTextColor(122, 96, 80);
-  doc.text('\uD55C \uC0AC\uB78C\uC758 \uC5ED\uC0AC', 18, 116);
+    // 배경색
+    doc.setFillColor(253, 246, 227);
+    doc.rect(0, 0, 210, 297, 'F');
 
-  doc.setDrawColor(196, 168, 130);
-  doc.setLineWidth(0.4);
-  doc.line(18, 124, 192, 124);
+    // 이미지 삽입
+    doc.addImage(imgData, 'JPEG', 0, 0, imgW, imgH);
 
-  doc.setFontSize(10);
-  doc.setTextColor(160, 128, 96);
-  doc.text('CHAPTER 01  \uB0B4\uAC00 \uD0DC\uC5B4\uB09C \uC138\uC0C1', 18, 138);
+    // 여백 있으면 배경 채우기
+    if (imgH < 297) {
+      doc.setFillColor(253, 246, 227);
+      doc.rect(0, imgH, 210, 297 - imgH, 'F');
+    }
 
-  const chTitle = document.getElementById('resChTitle').textContent;
-  doc.setFontSize(18);
-  doc.setFont('helvetica', 'bold');
-  doc.setTextColor(44, 31, 20);
-  const titleLines = doc.splitTextToSize(chTitle, 165);
-  doc.text(titleLines, 18, 158);
-
-  // ── 본문 페이지 ──
-  doc.addPage();
-  doc.setFillColor(253, 246, 227);
-  doc.rect(0, 0, 210, 297, 'F');
-  doc.setFillColor(184, 152, 106);
-  doc.rect(0, 0, 6, 297, 'F');
-
-  doc.setFontSize(9);
-  doc.setTextColor(196, 168, 130);
-  doc.text('2', 18, 18);
-  doc.setDrawColor(232, 221, 200);
-  doc.line(24, 18, 192, 18);
-
-  const rawText = document.getElementById('resText').innerText || document.getElementById('resText').textContent;
-  doc.setFontSize(11.5);
-  doc.setFont('helvetica', 'normal');
-  doc.setTextColor(61, 43, 31);
-  const bodyLines = doc.splitTextToSize(rawText, 166);
-  doc.text(bodyLines, 18, 32);
-
-  doc.save(`${S.name}_\uBCC4\uC774\uC57C\uAE30_1\uC7A5.pdf`);
+    doc.save(`${S.name}_별이야기_1장.pdf`);
+  } catch(e) {
+    console.error(e);
+    alert('PDF 생성 중 오류가 났어요. 다시 시도해주세요.');
+  } finally {
+    if (btn) { btn.textContent = '📄 PDF 저장하기'; btn.disabled = false; }
+  }
+}
 }
 
 function goPurchase() { goKakao(); }
