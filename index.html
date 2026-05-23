@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>별이야기 — 부모님 자서전, 무료로 만들어드려요</title>
+<meta property="og:title" content="별이야기 — 부모님 자서전 무료 체험">
+<meta property="og:description" content="AI 쩜쩜이가 부모님께 직접 인터뷰해요. 10분이면 1장 완성. 5월 25일 오픈.">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@300;400;600;700;900&family=Noto+Sans+KR:wght@300;400;500;700&display=swap');
+
+:root {
+  --bg: #FFFBF4;
+  --dark: #1E1409;
+  --brown: #2C1A0E;
+  --gold: #B8842A;
+  --gold-l: #D4A84A;
+  --gold-bg: #FFF8EE;
+  --muted: #9B7B5C;
+  --line: #EBE0D0;
+  --cream: #FDF6E3;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body { background: var(--bg); color: var(--brown); font-family: 'Noto Sans KR', sans-serif; overflow-x: hidden; }
+
+/* ── HERO ── */
+.hero {
+  min-height: 100vh;
+  background: var(--dark);
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  padding: 60px 28px;
+  text-align: center;
+  position: relative; overflow: hidden;
+}
+
+.hero::before {
+  content: '';
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(ellipse 70% 50% at 50% 90%, rgba(184,132,42,0.2) 0%, transparent 65%),
+    radial-gradient(ellipse 40% 30% at 80% 10%, rgba(184,132,42,0.06) 0%, transparent 60%);
+}
+
+.hero-inner { position: relative; z-index: 1; max-width: 560px; }
+
+/* 카운트다운 뱃지 */
+.countdown-badge {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: rgba(184,132,42,0.15);
+  border: 1px solid rgba(184,132,42,0.35);
+  border-radius: 24px;
+  padding: 10px 20px;
+  margin-bottom: 36px;
+  animation: badgePulse 2s ease-in-out infinite;
+}
+
+@keyframes badgePulse {
+  0%,100% { box-shadow: 0 0 0 0 rgba(184,132,42,0.2); }
+  50% { box-shadow: 0 0 0 8px rgba(184,132,42,0); }
+}
+
+.badge-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--gold-l);
+  animation: blink 1.2s ease infinite;
+}
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+.badge-text { font-size: 13px; font-weight: 700; color: var(--gold-l); letter-spacing: 1px; }
+
+/* 캐릭터 */
+.hero-char {
+  width: 90px; height: 90px; border-radius: 50%;
+  background: linear-gradient(145deg, #FFE4A0, #D4A84A);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 42px; margin: 0 auto 28px;
+  box-shadow: 0 0 0 10px rgba(184,132,42,0.08), 0 8px 32px rgba(184,132,42,0.2);
+}
+
+.hero-title {
+  font-family: 'Noto Serif KR', serif;
+  font-size: clamp(32px, 8vw, 56px);
+  font-weight: 900; color: var(--cream);
+  line-height: 1.3; margin-bottom: 20px;
+}
+.hero-title em { color: #FFE4A0; font-style: normal; }
+
+.hero-sub {
+  font-size: clamp(16px, 3.5vw, 20px);
+  color: rgba(253,246,227,0.5);
+  line-height: 1.9; margin-bottom: 48px;
+  font-weight: 300;
+}
+
+/* CTA */
+.cta-group { display: flex; flex-direction: column; align-items: center; gap: 12px; }
+
+.btn-cta {
+  background: var(--gold);
+  color: var(--dark);
+  font-size: 17px; font-weight: 700;
+  padding: 20px 44px;
+  border-radius: 6px; border: none;
+  cursor: pointer; letter-spacing: 0.5px;
+  transition: all 0.2s;
+  text-decoration: none; display: inline-block;
+  font-family: 'Noto Sans KR', sans-serif;
+  box-shadow: 0 4px 20px rgba(184,132,42,0.3);
+}
+.btn-cta:hover { background: var(--gold-l); transform: translateY(-2px); box-shadow: 0 8px 32px rgba(184,132,42,0.4); }
+
+.cta-hint { font-size: 13px; color: rgba(253,246,227,0.3); letter-spacing: 1px; }
+
+/* 스크롤 */
+.scroll-arrow {
+  position: absolute; bottom: 32px; left: 50%;
+  transform: translateX(-50%);
+  display: flex; flex-direction: column; align-items: center; gap: 6px;
+  animation: arrowBounce 2s ease infinite; z-index: 1;
+}
+.scroll-arrow span { font-size: 10px; letter-spacing: 3px; color: rgba(184,132,42,0.4); }
+.scroll-arrow svg { width: 18px; color: rgba(184,132,42,0.35); }
+@keyframes arrowBounce {
+  0%,100%{transform:translateX(-50%) translateY(0)}
+  50%{transform:translateX(-50%) translateY(8px)}
+}
+
+/* ── WHAT YOU GET ── */
+.section { padding: 88px 28px; }
+.section-inner { max-width: 640px; margin: 0 auto; }
+
+.eyebrow {
+  font-size: 11px; letter-spacing: 4px; font-weight: 700;
+  color: var(--gold); margin-bottom: 16px;
+  display: flex; align-items: center; gap: 10px;
+}
+.eyebrow::before { content:''; width:20px; height:1px; background:var(--gold); }
+
+.sec-title {
+  font-family: 'Noto Serif KR', serif;
+  font-size: clamp(24px, 5vw, 38px);
+  font-weight: 700; color: var(--brown);
+  line-height: 1.5; margin-bottom: 48px;
+  word-break: keep-all;
+}
+
+/* 받는 것 카드 */
+.get-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+
+.get-card {
+  background: white; border: 1.5px solid var(--line);
+  border-radius: 16px; padding: 28px 24px;
+  position: relative; overflow: hidden;
+  transition: all 0.2s;
+}
+.get-card:hover { border-color: var(--gold); box-shadow: 0 4px 24px rgba(184,132,42,0.1); }
+.get-card::before {
+  content:''; position:absolute; top:0; left:0; right:0; height:3px;
+  background: var(--gold);
+}
+.get-num {
+  font-family: 'Noto Serif KR', serif;
+  font-size: 40px; font-weight: 900; color: #F0E8DC;
+  margin-bottom: 10px; line-height: 1;
+}
+.get-title { font-size: 15px; font-weight: 700; color: var(--brown); margin-bottom: 6px; line-height: 1.5; }
+.get-desc { font-size: 13px; color: var(--muted); line-height: 1.8; font-weight: 300; }
+
+/* ── HOW ── */
+.how-sec { background: var(--dark); padding: 88px 28px; }
+.how-inner { max-width: 560px; margin: 0 auto; }
+.how-inner .eyebrow { color: var(--gold); }
+.how-title {
+  font-family: 'Noto Serif KR', serif;
+  font-size: clamp(24px, 5vw, 36px);
+  font-weight: 700; color: var(--cream);
+  line-height: 1.5; margin-bottom: 48px;
+}
+
+.steps { display: flex; flex-direction: column; }
+.step { display: grid; grid-template-columns: 56px 1fr; gap: 20px; padding-bottom: 40px; position: relative; }
+.step:not(:last-child)::after {
+  content:''; position:absolute; left:27px; top:50px; bottom:0;
+  width:2px; background:linear-gradient(to bottom, rgba(184,132,42,0.4), rgba(184,132,42,0.05));
+}
+.step-n {
+  width:56px; height:56px; border-radius:50%;
+  border:2px solid rgba(184,132,42,0.35);
+  background:rgba(184,132,42,0.07);
+  display:flex; align-items:center; justify-content:center;
+  font-family:'Noto Serif KR',serif;
+  font-size:18px; font-weight:700; color:var(--gold);
+  flex-shrink:0;
+}
+.step-t { padding-top: 10px; }
+.step-title { font-size: 17px; font-weight: 700; color: var(--cream); margin-bottom: 6px; }
+.step-desc { font-size: 14px; color: rgba(253,246,227,0.4); line-height: 1.8; font-weight: 300; }
+
+/* ── PREVIEW ── */
+.preview-sec { background: var(--gold-bg); padding: 88px 28px; }
+.preview-inner { max-width: 560px; margin: 0 auto; }
+
+.book-mock {
+  background: #FDF6E3;
+  border-radius: 2px;
+  box-shadow: 5px 5px 0 #D4C4A0, 10px 10px 0 #C4A882, 0 20px 50px rgba(44,26,14,0.12);
+  overflow: hidden; position: relative; margin-top: 40px;
+}
+.mock-spine {
+  position:absolute; left:0; top:0; bottom:0; width:5px;
+  background:linear-gradient(to right,#B8986A,#D4C4A0); z-index:2;
+}
+.mock-cover {
+  background:linear-gradient(160deg,#F0E6CC,#E0D0A8);
+  padding:28px 28px 24px 36px;
+  border-bottom:2px solid #D4C4A0; position:relative;
+}
+.mock-stamp {
+  position:absolute; top:12px; right:12px;
+  width:38px; height:48px;
+  background:rgba(253,246,227,0.75); border:1.5px solid #C4A882;
+  display:flex; align-items:center; justify-content:center; font-size:16px;
+}
+.mock-tag { font-size:9px; letter-spacing:3px; color:#A08060; margin-bottom:6px; font-family:'Noto Sans KR',sans-serif; }
+.mock-name { font-family:'Noto Serif KR',serif; font-size:24px; font-weight:900; color:#2C1F14; line-height:1.3; margin-bottom:3px; }
+.mock-sub { font-size:11px; color:#7A6050; letter-spacing:2px; }
+.mock-body { padding:24px 28px 28px 36px; }
+.mock-ch { font-size:9px; letter-spacing:3px; color:#A08060; margin-bottom:8px; font-family:'Noto Sans KR',sans-serif; }
+.mock-ch-title { font-family:'Noto Serif KR',serif; font-size:18px; font-weight:700; color:#2C1F14; margin-bottom:14px; }
+.mock-text { font-family:'Noto Serif KR',serif; font-size:13px; color:#3D2B1F; line-height:2.4; font-weight:300; }
+.mock-text em { font-style:italic; color:#8B5A3C; border-bottom:1px solid #C4A882; }
+
+/* ── PRICING ── */
+.price-sec { background: var(--bg); padding: 88px 28px; }
+.price-inner { max-width: 480px; margin: 0 auto; text-align: center; }
+.price-title { font-family:'Noto Serif KR',serif; font-size:clamp(24px,5vw,36px); font-weight:700; color:var(--brown); line-height:1.5; margin-bottom:40px; }
+
+.price-cards { display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:32px; }
+.price-card { border-radius:12px; padding:28px 20px; text-align:left; }
+.price-free { background:var(--gold-bg); border:1.5px solid var(--line); }
+.price-paid { background:var(--dark); border:1.5px solid var(--dark); position:relative; overflow:hidden; }
+.price-paid::before { content:''; position:absolute; top:0; left:0; right:0; height:3px; background:var(--gold); }
+.p-tag { font-size:10px; letter-spacing:3px; font-weight:700; margin-bottom:12px; }
+.price-free .p-tag { color:var(--muted); }
+.price-paid .p-tag { color:var(--gold); }
+.p-amt { font-family:'Noto Serif KR',serif; font-size:28px; font-weight:900; margin-bottom:3px; }
+.price-free .p-amt { color:var(--brown); }
+.price-paid .p-amt { color:var(--cream); }
+.p-unit { font-size:12px; margin-bottom:16px; font-weight:300; }
+.price-free .p-unit { color:var(--muted); }
+.price-paid .p-unit { color:rgba(253,246,227,0.4); }
+.p-list { list-style:none; font-size:12px; line-height:2.1; }
+.price-free .p-list { color:var(--muted); }
+.price-paid .p-list { color:rgba(253,246,227,0.55); }
+.p-list li::before { content:'— '; }
+.price-paid .p-list li::before { color:var(--gold); }
+.price-note { font-size:12px; color:var(--muted); }
+
+/* ── FINAL CTA ── */
+.final-sec {
+  background: var(--dark);
+  padding: 100px 28px;
+  text-align: center; position: relative; overflow: hidden;
+}
+.final-sec::before {
+  content:''; position:absolute; inset:0;
+  background:radial-gradient(ellipse 70% 60% at 50% 100%, rgba(184,132,42,0.18) 0%, transparent 65%);
+}
+.final-inner { max-width:500px; margin:0 auto; position:relative; z-index:1; }
+.final-deco { font-size:28px; margin-bottom:28px; opacity:0.5; }
+.final-title { font-family:'Noto Serif KR',serif; font-size:clamp(22px,5vw,36px); font-weight:700; color:var(--cream); line-height:1.6; margin-bottom:12px; word-break:keep-all; }
+.final-sub { font-size:15px; color:rgba(253,246,227,0.4); line-height:1.9; margin-bottom:40px; }
+.open-date { font-size:13px; color:rgba(184,132,42,0.6); letter-spacing:2px; margin-top:14px; }
+
+/* 애니메이션 */
+.reveal { opacity:0; transform:translateY(28px); transition:opacity 0.65s ease, transform 0.65s ease; }
+.reveal.on { opacity:1; transform:translateY(0); }
+
+/* 반응형 */
+@media(max-width:480px) {
+  .get-grid { grid-template-columns:1fr; }
+  .price-cards { grid-template-columns:1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-inner">
+    <div class="countdown-badge">
+      <div class="badge-dot"></div>
+      <span class="badge-text">5월 25일 오픈 · 사전신청 중</span>
+    </div>
+    <div class="hero-char">🌸</div>
+    <h1 class="hero-title">
+      부모님 자서전을<br>
+      <em>무료</em>로 만들어드려요
+    </h1>
+    <p class="hero-sub">
+      AI 쩜쩜이가 부모님께 직접 인터뷰해요<br>
+      말로만 하면 돼요 · 10분이면 1장 완성
+    </p>
+    <div class="cta-group">
+      <a href="https://docs.google.com/forms/d/e/1FAIpQLSe7xL03hsyp32i4qxXGpHV040d-g5zLRvztS8gUW6jLcUct2w/viewform?usp=publish-editor" class="btn-cta" target="_blank">사전신청하기 (무료)</a>
+      <span class="cta-hint">5월 25일에 체험 링크 보내드려요</span>
+    </div>
+  </div>
+  <div class="scroll-arrow">
+    <span>SCROLL</span>
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+      <path d="M12 5v14M5 12l7 7 7-7"/>
+    </svg>
+  </div>
+</section>
+
+<!-- WHAT YOU GET -->
+<section class="section">
+  <div class="section-inner">
+    <div class="eyebrow reveal">받으실 수 있는 것</div>
+    <h2 class="sec-title reveal">한 번도 들어본 적 없던<br>엄마 아빠의 이야기</h2>
+    <div class="get-grid">
+      <div class="get-card reveal">
+        <div class="get-num">01</div>
+        <div class="get-title">말로만 하면 돼요</div>
+        <div class="get-desc">타자 없이 목소리로만. 쩜쩜이가 손녀처럼 따뜻하게 물어봐요.</div>
+      </div>
+      <div class="get-card reveal">
+        <div class="get-num">02</div>
+        <div class="get-title">10분이면 1장 완성</div>
+        <div class="get-desc">짧게 대답해도 괜찮아요. AI가 이야기를 아름답게 살려드려요.</div>
+      </div>
+      <div class="get-card reveal">
+        <div class="get-num">03</div>
+        <div class="get-title">소설처럼 읽혀요</div>
+        <div class="get-desc">부모님 말투가 살아있는 자서전. AI 티 전혀 안 나요.</div>
+      </div>
+      <div class="get-card reveal">
+        <div class="get-num">04</div>
+        <div class="get-title">1장은 무료예요</div>
+        <div class="get-desc">결제 없이 먼저 체험. 마음에 들면 그때 전체를 완성하세요.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW -->
+<section class="how-sec">
+  <div class="how-inner">
+    <div class="eyebrow reveal" style="color:var(--gold)">이용 방법</div>
+    <h2 class="how-title reveal">세 가지만 하면 돼요</h2>
+    <div class="steps">
+      <div class="step reveal">
+        <div class="step-n">1</div>
+        <div class="step-t">
+          <div class="step-title">사전신청하세요</div>
+          <div class="step-desc">아래 폼에 이름이랑 연락처만 남겨주세요. 5월 25일에 링크 보내드려요.</div>
+        </div>
+      </div>
+      <div class="step reveal">
+        <div class="step-n">2</div>
+        <div class="step-t">
+          <div class="step-title">부모님께 링크 보내드리세요</div>
+          <div class="step-desc">카카오톡으로 그냥 전달하면 돼요. 앱 설치 없어요.</div>
+        </div>
+      </div>
+      <div class="step reveal">
+        <div class="step-n">3</div>
+        <div class="step-t">
+          <div class="step-title">10분 후 자서전 1장 완성</div>
+          <div class="step-desc">쩜쩜이가 인터뷰하고 PDF로 만들어드려요. 마음에 드시면 전체 완성도 가능해요.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PREVIEW -->
+<section class="preview-sec">
+  <div class="preview-inner">
+    <div class="eyebrow reveal">결과물 미리보기</div>
+    <h2 class="sec-title reveal" style="margin-bottom:0">이런 책이 만들어져요</h2>
+    <div class="book-mock reveal">
+      <div class="mock-spine"></div>
+      <div class="mock-cover">
+        <div class="mock-stamp">✦</div>
+        <div class="mock-tag">별이야기 · BYEOL STORY</div>
+        <div class="mock-name">김순자<br>이야기</div>
+        <div class="mock-sub">한 사람의 역사</div>
+      </div>
+      <div class="mock-body">
+        <div class="mock-ch">CHAPTER 01 · 내가 태어난 세상</div>
+        <div class="mock-ch-title">비밀 장소가 있었어요</div>
+        <div class="mock-text">
+          학교 뒷산에 바위가 하나 있었다고 했습니다. 거기 올라가면 마을이 다 내려다보였다고. 무서운 날이나 심심한 날이면 혼자 거기 올라가 앉아 있었답니다.<br><br>
+          <em>아무한테도 말 안 했어, 나만의 자리였거든.</em><br><br>
+          그 말을 하시며 잠깐 먼 곳을 바라보셨습니다. 수십 년 전의 그 바위 위로 돌아가신 것처럼.
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section class="price-sec">
+  <div class="price-inner">
+    <h2 class="price-title reveal">1장은 무료예요.<br>먼저 해보세요.</h2>
+    <div class="price-cards reveal">
+      <div class="price-card price-free">
+        <div class="p-tag">FREE</div>
+        <div class="p-amt">무료</div>
+        <div class="p-unit">1장 체험</div>
+        <ul class="p-list">
+          <li>AI 음성 인터뷰</li>
+          <li>1장 자서전 PDF</li>
+          <li>10분이면 완료</li>
+        </ul>
+      </div>
+      <div class="price-card price-paid">
+        <div class="p-tag">FULL</div>
+        <div class="p-amt">29,000</div>
+        <div class="p-unit">원 · 전체 7장</div>
+        <ul class="p-list">
+          <li>3일 전체 인터뷰</li>
+          <li>완성 자서전 PDF</li>
+          <li>자녀 편지 삽입</li>
+          <li>사진 업로드 가능</li>
+        </ul>
+      </div>
+    </div>
+    <p class="price-note reveal">인쇄본 원하시면 +30,000원</p>
+  </div>
+</section>
+
+<!-- FINAL CTA -->
+<section class="final-sec">
+  <div class="final-inner">
+    <div class="final-deco">✦</div>
+    <h2 class="final-title reveal">엄마한테 한 번도<br>물어본 적 없었잖아요</h2>
+    <p class="final-sub reveal">쩜쩜이가 대신 물어봐드릴게요.<br>5월 25일, 무료로 시작할 수 있어요.</p>
+    <a href="https://docs.google.com/forms/d/e/1FAIpQLSe7xL03hsyp32i4qxXGpHV040d-g5zLRvztS8gUW6jLcUct2w/viewform?usp=publish-editor" class="btn-cta reveal" target="_blank">사전신청하기 (무료) →</a>
+    <p class="open-date reveal">5월 25일 · 체험 링크 발송</p>
+  </div>
+</section>
+
+<script>
+const els = document.querySelectorAll('.reveal');
+const obs = new IntersectionObserver(entries => {
+  entries.forEach((e, i) => {
+    if (e.isIntersecting) {
+      setTimeout(() => e.target.classList.add('on'), i * 70);
+      obs.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.1 });
+els.forEach(el => obs.observe(el));
+</script>
+</body>
+</html>
