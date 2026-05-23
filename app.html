@@ -389,16 +389,17 @@ html, body { height: 100%; background: var(--bg); overflow: hidden; }
 .result-top {
   background: white;
   border-bottom: 1px solid var(--line);
-  padding: 16px 20px;
+  padding: 14px 20px;
   display: flex; align-items: center;
   justify-content: space-between;
   flex-shrink: 0;
+  position: sticky; top: 0; z-index: 10;
 }
 .result-top-title {
   font-family: 'Noto Serif KR', serif;
-  font-size: 18px; font-weight: 700; color: var(--brown);
+  font-size: clamp(15px, 4vw, 18px); font-weight: 700; color: var(--brown);
 }
-.result-top-sub { font-size: 13px; color: var(--gold); }
+.result-top-sub { font-size: 12px; color: var(--gold); }
 
 .share-btn {
   background: var(--gold-bg); border: 1.5px solid var(--gold);
@@ -409,7 +410,9 @@ html, body { height: 100%; background: var(--bg); overflow: hidden; }
 
 /* 책 미리보기 */
 .book-wrap {
-  margin: 20px 16px;
+  margin: 20px auto;
+  max-width: 480px;
+  width: calc(100% - 32px);
   background: #FDF6E3;
   border-radius: 4px;
   box-shadow: 4px 4px 0 #D4C4A0, 8px 8px 0 #C4A882,
@@ -426,49 +429,52 @@ html, body { height: 100%; background: var(--bg); overflow: hidden; }
 
 .book-cover-r {
   background: linear-gradient(160deg, #F0E6CC 0%, #E0D0A8 100%);
-  padding: 32px 28px 28px 36px;
+  padding: 28px 24px 24px 32px;
   border-bottom: 2px solid #D4C4A0;
   position: relative;
 }
 .book-stamp-r {
   position: absolute; top: 14px; right: 14px;
-  width: 40px; height: 50px;
+  width: 36px; height: 46px;
   background: rgba(253,246,227,0.75); border: 1.5px solid #C4A882;
-  display: flex; align-items: center; justify-content: center; font-size: 18px;
+  display: flex; align-items: center; justify-content: center; font-size: 16px;
 }
-.book-tag-r { font-size: 10px; letter-spacing: 3px; color: #A08060; margin-bottom: 6px; font-family: 'Noto Sans KR', sans-serif; }
+.book-tag-r { font-size: 10px; letter-spacing: 2px; color: #A08060; margin-bottom: 6px; font-family: 'Noto Sans KR', sans-serif; }
 .book-name-r {
   font-family: 'Noto Serif KR', serif;
-  font-size: 28px; font-weight: 900; color: #2C1F14;
+  font-size: clamp(20px, 5vw, 28px); font-weight: 900; color: #2C1F14;
   line-height: 1.3; margin-bottom: 4px; white-space: pre-line;
 }
-.book-sub-r { font-size: 12px; color: #7A6050; letter-spacing: 2px; }
+.book-sub-r { font-size: 11px; color: #7A6050; letter-spacing: 2px; }
 
 .book-ch-r {
-  padding: 24px 28px 14px 36px;
+  padding: 20px 24px 12px 32px;
   border-bottom: 1px solid #EBE0D0;
 }
-.book-ch-num-r { font-size: 10px; letter-spacing: 3px; color: #A08060; margin-bottom: 6px; font-family: 'Noto Sans KR', sans-serif; }
+.book-ch-num-r { font-size: 9px; letter-spacing: 2px; color: #A08060; margin-bottom: 6px; font-family: 'Noto Sans KR', sans-serif; }
 .book-ch-title-r {
   font-family: 'Noto Serif KR', serif;
-  font-size: 22px; font-weight: 700; color: #2C1F14; line-height: 1.4;
+  font-size: clamp(17px, 4vw, 22px); font-weight: 700; color: #2C1F14; line-height: 1.4;
+  word-break: keep-all;
 }
 
 .book-body-r {
-  padding: 24px 28px 32px 36px;
+  padding: 20px 24px 28px 32px;
 }
 .book-text-r {
   font-family: 'Noto Serif KR', serif;
-  font-size: 15px; color: #3D2B1F; line-height: 2.6;
+  font-size: clamp(13px, 3vw, 15px); color: #3D2B1F; line-height: 2.4;
   font-weight: 300; word-break: keep-all; white-space: pre-line;
 }
 
 /* 유료 전환 카드 */
 .upsell {
-  margin: 4px 16px 32px;
+  margin: 4px auto 32px;
+  max-width: 480px;
+  width: calc(100% - 32px);
   background: var(--brown);
   border-radius: 16px;
-  padding: 32px 24px;
+  padding: 28px 20px;
   text-align: center;
   position: relative; overflow: hidden;
 }
@@ -477,22 +483,22 @@ html, body { height: 100%; background: var(--bg); overflow: hidden; }
   position: absolute; inset: 0;
   background: radial-gradient(ellipse at 50% 110%, rgba(212,168,74,0.2) 0%, transparent 65%);
 }
-.upsell-icon { font-size: 36px; margin-bottom: 14px; position: relative; z-index:1; }
+.upsell-icon { font-size: 32px; margin-bottom: 12px; position: relative; z-index:1; }
 .upsell-title {
   font-family: 'Noto Serif KR', serif;
-  font-size: 22px; font-weight: 700; color: #FDF6E3;
+  font-size: clamp(18px, 4vw, 22px); font-weight: 700; color: #FDF6E3;
   line-height: 1.5; margin-bottom: 10px; position: relative; z-index:1;
 }
 .upsell-desc {
-  font-size: 15px; color: rgba(253,246,227,0.5);
-  line-height: 1.9; margin-bottom: 24px; position: relative; z-index:1;
+  font-size: clamp(13px, 3vw, 15px); color: rgba(253,246,227,0.5);
+  line-height: 1.9; margin-bottom: 20px; position: relative; z-index:1;
 }
 .upsell-price {
   font-family: 'Noto Serif KR', serif;
-  font-size: 32px; font-weight: 900; color: var(--gold-light);
-  margin-bottom: 20px; position: relative; z-index:1;
+  font-size: 28px; font-weight: 900; color: var(--gold-light);
+  margin-bottom: 18px; position: relative; z-index:1;
 }
-.upsell-price span { font-size: 15px; font-weight: 300; color: rgba(253,246,227,0.4); }
+.upsell-price span { font-size: 14px; font-weight: 300; color: rgba(253,246,227,0.4); }
 
 /* ── BUTTONS ── */
 .btn-main {
@@ -1068,7 +1074,9 @@ async function downloadPDF() {
       scale: 2,
       useCORS: true,
       backgroundColor: '#FDF6E3',
-      logging: false
+      logging: false,
+      width: 480,
+      windowWidth: 480
     });
 
     const imgData = canvas.toDataURL('image/jpeg', 0.95);
@@ -1095,7 +1103,6 @@ async function downloadPDF() {
   } finally {
     if (btn) { btn.textContent = '📄 PDF 저장하기'; btn.disabled = false; }
   }
-}
 }
 
 function goPurchase() { goKakao(); }
